@@ -1,0 +1,5 @@
+/.venv
+/checkpoints
+/full_4m_corpus.jsonl
+/train.jsonl
+/__pycache__
