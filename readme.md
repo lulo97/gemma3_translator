@@ -17,3 +17,5 @@ uv python install 3.14.5
 uv venv --python 3.14.5
 
 uv pip install "numpy==2.5.2" "gguf==0.19.0" "tokenizers==0.23.1" "requests==2.34.2"
+
+model file and checkpoint lastest on https://app.filen.io/#/drive/d959d635-16bf-418c-8934-488e24636e51/9ee9bb55-fe80-4de7-b062-8da6fcf04fc0
