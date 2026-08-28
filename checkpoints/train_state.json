@@ -1368,6 +1368,18 @@
       "mem_used_mb": 1421.0,
       "power_draw_watt": 16.55,
       "temp_c": 47.0
+    },
+    {
+      "step": 5050,
+      "learning_rate": 0.0003999999926473685,
+      "train_loss": 3.7766549587249756,
+      "avg_step_second": 0.4095765018463135,
+      "eta_second": 20476756.73098135,
+      "val_loss": 3.8058896446228028,
+      "gpu_util_percent": 52.0,
+      "mem_used_mb": 1421.0,
+      "power_draw_watt": 42.73,
+      "temp_c": 49.0
     }
   ]
 }
