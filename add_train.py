@@ -3,7 +3,7 @@ import itertools
 def append_corpus_slice(
     train_path: str = "train.jsonl",
     corpus_path: str = "full_4m_corpus.jsonl",
-    amount: int = 1000
+    amount: int = 1000000
 ):
     # Step 1: Count total lines L in train.jsonl
     print("Counting lines in train.jsonl...")

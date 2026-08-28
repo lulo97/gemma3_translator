@@ -76,7 +76,7 @@ def main():
             final_logit_softcap=0.0,
 
             max_sequence_length=256,
-            batch_size=8,
+            batch_size=16,
             accumulation_steps=2,
             val_split=0.01,
             weight_decay=0.01,

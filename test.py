@@ -26,7 +26,7 @@ cfg = Config.load("checkpoints/config.json")
 tokenizer = GemmaTokenizer(cfg)
 tokenizer.load("checkpoints/tokenizer.json")
 model = Gemma3(cfg)
-step, _ = model.load_checkpoint("checkpoints/step_1200.npz")  # your latest checkpoint
+step, _ = model.load_checkpoint("checkpoints/step_5000.npz")  # your latest checkpoint
 
 out = generate(model, tokenizer, "i have a cat.", max_new_tokens=50, do_sample=False)
 print(out)

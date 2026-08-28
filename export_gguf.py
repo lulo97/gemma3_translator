@@ -72,12 +72,19 @@ def export_gguf(model, tokenizer, path):
         # older `gguf` python package versions may not expose these setters;
         # the model will still load but sliding-window/rope-local metadata
         # will be missing (llama.cpp will fall back to global rope everywhere).
+
+        #AttributeError: 'GGUFWriter' object has no attribute 'add_attn_sliding_window_pattern'. Did you mean: 'add_sliding_window_pattern'?
+
+        #raise
+
+
         pass
 
     if cfg.final_logit_softcap and cfg.final_logit_softcap > 0:
         try:
             writer.add_final_logit_softcapping(cfg.final_logit_softcap)
         except AttributeError:
+            raise
             pass
 
     # ---------------- tokenizer ----------------
@@ -120,6 +127,33 @@ def export_gguf(model, tokenizer, path):
     writer.add_unk_token_id(tokenizer.unk_id)
     writer.add_pad_token_id(tokenizer.pad_id)
 
+    # ---------------- chat formatting metadata ----------------
+    # Training always packs: <bos><start_of_turn>{input}<end_of_turn><start_of_turn>{output}<end_of_turn><eos>
+    # Without these, llama.cpp/llama-server will NOT prepend <bos> and will NOT
+    # know how to wrap a user turn, so raw inference sees out-of-distribution
+    # input and the model degenerates into gibberish (this was the actual bug).
+    try:
+        writer.add_add_bos_token(True)
+        writer.add_add_eos_token(False)
+    except AttributeError:
+        raise
+        pass
+
+    sot = cfg.start_of_turn_token
+    eot = cfg.end_of_turn_token
+    chat_template = (
+        "{{ bos_token }}"
+        "{% for message in messages %}"
+        f"{sot}{{{{ message['content'] }}}}{eot}"
+        "{% endfor %}"
+        f"{sot}"
+    )
+    try:
+        writer.add_chat_template(chat_template)
+    except AttributeError:
+        raise
+        pass
+
     # ---------------- tensors ----------------
     def W(name):
         # our Linear stores (in, out); ggml wants (out, in)
@@ -158,28 +192,30 @@ def export_gguf(model, tokenizer, path):
 
     print(f"Exported GGUF model to {path}")
 
-import os
-import glob
+# Run block to test export functionality if run directly
+if __name__ == "__main__":
+    import os
+    import glob
 
-from gemma3_utils import Config, GemmaTokenizer, Gemma3
+    from gemma3_utils import Config, GemmaTokenizer, Gemma3
 
-CKPT_DIR = "checkpoints"
+    CKPT_DIR = "checkpoints"
 
-cfg = Config.load(os.path.join(CKPT_DIR, "config.json"))
+    cfg = Config.load(os.path.join(CKPT_DIR, "config.json"))
 
-tokenizer = GemmaTokenizer(cfg)
-tokenizer.load(os.path.join(CKPT_DIR, "tokenizer.json"))
+    tokenizer = GemmaTokenizer(cfg)
+    tokenizer.load(os.path.join(CKPT_DIR, "tokenizer.json"))
 
-model = Gemma3(cfg)
+    model = Gemma3(cfg)
 
-checkpoint_files = glob.glob(os.path.join(CKPT_DIR, "step_*.npz"))
-if not checkpoint_files:
-    raise FileNotFoundError(f"No step_*.npz checkpoints found in {CKPT_DIR}")
+    checkpoint_files = glob.glob(os.path.join(CKPT_DIR, "step_*.npz"))
+    if not checkpoint_files:
+        raise FileNotFoundError(f"No step_*.npz checkpoints found in {CKPT_DIR}")
 
-latest = max(checkpoint_files, key=lambda f: int(f.split('_')[-1].split('.')[0]))
-print(f"Loading checkpoint: {latest}")
-step, _ = model.load_checkpoint(latest)
-print(f"Loaded step {step}")
+    latest = max(checkpoint_files, key=lambda f: int(f.split('_')[-1].split('.')[0]))
+    print(f"Loading checkpoint: {latest}")
+    step, _ = model.load_checkpoint(latest)
+    print(f"Loaded step {step}")
 
-out_path = os.path.join(CKPT_DIR, "model.gguf")
-export_gguf(model, tokenizer, out_path)
+    out_path = os.path.join(CKPT_DIR, "model.gguf")
+    export_gguf(model, tokenizer, out_path)

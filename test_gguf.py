@@ -1,3 +1,4 @@
+import json
 import os
 import subprocess
 import sys
@@ -8,7 +9,7 @@ import requests
 llama_cli_executable = "llama-cli"
 llama_server_executable = "llama-server"  # must be on PATH, or use full path
 model_path = r"checkpoints\model.gguf"
-prompt_text = "Name of the disk/tape :"
+prompt_text = "i have a cat."
 
 PORT = 8080
 BASE_URL = f"http://127.0.0.1:{PORT}"
@@ -17,7 +18,8 @@ BASE_URL = f"http://127.0.0.1:{PORT}"
 def run_cmd(cmd):
     """Utility to run shell commands and print output."""
     print(f"\n[EXEC] {cmd}")
-    res = subprocess.run(cmd, shell=True, capture_output=True, text=True)
+    # ADD encoding="utf-8" HERE
+    res = subprocess.run(cmd, shell=True, capture_output=True, text=True, encoding="utf-8")
     print(f"[STDOUT]\n{res.stdout}")
     if res.stderr:
         print(f"[STDERR]\n{res.stderr}")
@@ -101,6 +103,24 @@ def main():
             f'-d "{{\\"prompt\\": \\"{prompt_text}\\", \\"temperature\\": 0}}"'
         )
         run_cmd(legacy_curl)
+
+        payload = {
+            "messages": [
+                {"role": "user", "content": prompt_text}
+            ],
+            "temperature": 0
+        }
+
+        # Convert dict to JSON string and escape double quotes for Windows CMD shell execution
+        payload_json = json.dumps(payload).replace('"', '\\"')
+
+        chat_curl = (
+            f'curl -X POST "{BASE_URL}/v1/chat/completions" '
+            f'-H "Content-Type: application/json" '
+            f'-d "{payload_json}"'
+        )
+
+        run_cmd(chat_curl)
 
     finally:
         # 5. Shut down server and release port 8080
