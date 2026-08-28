@@ -43,5 +43,5 @@ latest_checkpoint = max(
 # Load the latest checkpoint
 step, _ = model.load_checkpoint(latest_checkpoint)
 
-out = generate(model, tokenizer, "i have a cat.", max_new_tokens=50, do_sample=False)
+out = generate(model, tokenizer, "I have money for it.", max_new_tokens=50, do_sample=False)
 print(out)

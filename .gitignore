@@ -7,4 +7,3 @@
 !checkpoints/config.json
 !checkpoints/train_state.json
 !checkpoints/tokenizer.json
-!checkpoints/tokenized_cache_meta.json
