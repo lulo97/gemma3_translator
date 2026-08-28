@@ -16,4 +16,4 @@ uv python install 3.14.5
 
 uv venv --python 3.14.5
 
-uv pip install "cupy-cuda12x==14.2.0" "numpy==2.5.2" "gguf==0.19.0" "tokenizers==0.23.1" "requests==2.34.2"
+uv pip install "numpy==2.5.2" "gguf==0.19.0" "tokenizers==0.23.1" "requests==2.34.2"
