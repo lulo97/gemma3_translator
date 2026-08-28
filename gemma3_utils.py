@@ -372,7 +372,11 @@ class JsonlDataset:
                 for line in f:
                     line = line.strip()
                     if not line: continue
-                    obj = json.loads(line)
+                    try:
+                        obj = json.loads(line)
+                    except Exception as e:
+                        print("This line error:", line)
+                        raise e
                     self.inputs.append(obj["input"])
                     self.outputs.append(obj["output"])
 
