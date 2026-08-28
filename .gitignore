@@ -1,5 +1,10 @@
 /.venv
-/checkpoints
+/checkpoints/*
 /full_4m_corpus.jsonl
 /train.jsonl
 /__pycache__
+
+!checkpoints/config.json
+!checkpoints/train_state.json
+!checkpoints/tokenizer.json
+!checkpoints/tokenized_cache_meta.json
