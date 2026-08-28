@@ -10,6 +10,8 @@ CLOUD GPU:
     + checkpoints\train_state.json 
     + checkpoints\step_5000.npz
 
+https://github.com/lulo97/gemma3_translator
+
 uv python install 3.14.5
 
 uv venv --python 3.14.5

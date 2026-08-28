@@ -20,13 +20,28 @@
 # print("\n=== attn_sliding_window_pattern specifically ===")
 # print([f.name for f in reader.fields.values() if "pattern" in f.name.lower()])
 
+import glob
+import re
+
 from gemma3_utils import Config, GemmaTokenizer, Gemma3, generate
 
 cfg = Config.load("checkpoints/config.json")
 tokenizer = GemmaTokenizer(cfg)
 tokenizer.load("checkpoints/tokenizer.json")
 model = Gemma3(cfg)
-step, _ = model.load_checkpoint("checkpoints/step_5000.npz")  # your latest checkpoint
+
+checkpoint_files = glob.glob("checkpoints/step_*.npz")
+
+if not checkpoint_files:
+    raise FileNotFoundError("No checkpoints found in 'checkpoints/'")
+
+latest_checkpoint = max(
+    checkpoint_files,
+    key=lambda path: int(re.search(r"step_(\d+)\.npz", path).group(1)),
+)
+
+# Load the latest checkpoint
+step, _ = model.load_checkpoint(latest_checkpoint)
 
 out = generate(model, tokenizer, "i have a cat.", max_new_tokens=50, do_sample=False)
 print(out)
