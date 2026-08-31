@@ -9,3 +9,4 @@
 !checkpoints/tokenizer.json
 train_small.jsonl
 test-model/model.gguf
+gemma3_translator.zip
