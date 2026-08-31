@@ -76,11 +76,11 @@ def main():
             final_logit_softcap=0.0,
 
             max_sequence_length=256,
-            batch_size=16,
+            batch_size=64,
             accumulation_steps=2,
             val_split=0.01,
             weight_decay=0.01,
-            learning_rate=4e-4,
+            learning_rate=4e-5,
             steps_per_run=2000,
             log_interval=50,
             save_interval=200,

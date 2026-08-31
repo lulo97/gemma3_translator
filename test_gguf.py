@@ -9,7 +9,7 @@ import requests
 llama_cli_executable = "llama-cli"
 llama_server_executable = "llama-server"  # must be on PATH, or use full path
 model_path = r"checkpoints\model.gguf"
-prompt_text = "i have a cat."
+prompt_text = "the bird ask chicken for dinner."
 
 PORT = 8080
 BASE_URL = f"http://127.0.0.1:{PORT}"
